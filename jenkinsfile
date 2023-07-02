@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                // Pasos para la compilación del código fuente
+               //sh 'javac -sourcepath src -d build/classes src/MyApp.java src/com/example/MyAppTest.java'
+                sh 'javac -cp lib/junit-4.13.2.jar:lib/hamcrest-2.2.jar -sourcepath src -d build/classes src/MyApp.java src/com/example/MyAppTest.java'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Pasos para ejecutar pruebas unitarias
+                // sh 'java -cp build/classes org.junit.runner.JUnitCore com.example.MyAppTest'
+                sh 'java -cp build/classes:lib/junit-4.13.2.jar:lib/hamcrest-2.2.jar org.junit.runner.JUnitCore com.example.MyAppTest'
+
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Pasos para la implementación en un entorno de prueba
+                sh 'ssh user@server "bash -s" < deploy_script.sh'
+            }
+        }
+    }
+}
